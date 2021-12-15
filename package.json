@@ -1,0 +1,27 @@
+{
+  "author": "Menashe Koren",
+  "bugs": {
+    "url": "https://github.com/MenasheKoren/around-express/issues"
+  },
+  "description": "`/data` — JSON files to temporarily emulate database integration.",
+  "devDependencies": {
+    "eslint": "^8.4.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.3",
+    "jest": "^27.4.5",
+    "prettier": "^2.5.1"
+  },
+  "homepage": "https://github.com/MenasheKoren/around-express#readme",
+  "license": "ISC",
+  "main": "index.js",
+  "name": "web_project_12",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MenasheKoren/around-express.git"
+  },
+  "scripts": {
+    "lint": "npx eslint .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.0"
+}
