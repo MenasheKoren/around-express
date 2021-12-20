@@ -5,8 +5,14 @@ const app = express();
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
 });
+app.use(express.json());
 
-app.get("/users", (req, res) => {
+app.use(function (req, res, next) {
+  console.log(req.body);
+  next();
+});
+
+app.post("/users/", (req, res) => {
   res.send(req.query);
 });
 
