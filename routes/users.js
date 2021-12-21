@@ -1,23 +1,21 @@
 const router = require("express").Router();
+
 const users = require("../data/users.json");
+const doesUserExist = require("./middleware");
 
-const doesUserExist = (req, res, next) => {
-  if (!users[req.params.id]) {
-    res.send(`This user doesn't exist`);
-    return;
-  }
 
-  next();
-};
 
+router.use(doesUserExist);
 const sendUser = (req, res) => {
-  res.send(users[req.params.id]);
+  res.send(users[req.params._id]);
 };
 
 router.get("/", (req, res) => {
   res.status(200).send(users);
+
 });
 
-router.get("/:id", doesUserExist, sendUser);
+router.get("/:_id", doesUserExist, sendUser);
+
 
 module.exports = router;
