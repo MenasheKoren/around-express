@@ -1,12 +1,17 @@
 const users = require("../data/users.json");
 
 const doesUserExist = (req, res, next) => {
-  if (!users[req.params._id]) {
-    res.send(`This user doesn't exist`);
-    console.log(users.find(req.params._id));
-    return;
+  for (const userEntity in users) {
+    if (!userEntity.find(req.params._id)) {
+      res.send(`This user doesn't exist`);
+      return;
+    }
+    next();
   }
-  next();
 };
 
-module.exports = doesUserExist;
+const sendUser = (req, res) => {
+  res.send(users(req.params._id));
+};
+
+module.exports = { doesUserExist, sendUser };
