@@ -11,7 +11,8 @@ const doesUserExist = (req, res, next) => {
 
 const sendUser = (req, res) => {
   for (const user in users) {
-    res.send(users.filter((user) => user._id === req.params.id));
+    res.json(users.filter((user) => user._id === req.params.id));
+    return;
   }
 };
 
