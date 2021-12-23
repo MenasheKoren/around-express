@@ -4,7 +4,6 @@
     "url": "https://github.com/MenasheKoren/around-express/issues"
   },
   "dependencies": {
-    "body-parser": "^1.19.1",
     "express": "^4.17.2"
   },
   "description": "`/data` — JSON files to temporarily emulate database integration.",
