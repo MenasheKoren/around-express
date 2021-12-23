@@ -4,12 +4,7 @@ const cards = require("./routes/cards");
 const { PORT = 3000 } = process.env;
 const app = express();
 
-app.use("/users", users);
-app.use("/cards", cards);
-
-app.get("/", (req, res) => {
-  res.status(404).send("Requested resource not found");
-});
+app.use("/", cards, users);
 
 app.listen(PORT, function (err) {
   if (err) {
@@ -17,3 +12,4 @@ app.listen(PORT, function (err) {
   }
   console.log(`App listening on port ${PORT}`);
 });
+
