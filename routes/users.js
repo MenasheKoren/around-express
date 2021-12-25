@@ -1,23 +1,26 @@
 const router = require("express").Router();
-const { readFileUsers } = require("../middleware");
+const path = require("path");
+const fsPromises = require("fs").promises;
 
-const doesUserExist = (req, res, next) => {
-  router.use(readFileUsers);
-  console.log(readFileUsers);
-  if (!readFileUsers.find((user) => user._id === req.params._id)) {
-    res.status(404).send(`This user doesn't exist`);
-    return;
-  }
-  next();
-};
+function readFileUsers(req, res) {
+  const usersPath = path.join(__dirname, "..", "data", "users.json");
+  fsPromises
+    .readFile(usersPath, { encoding: "utf8" })
+    .then((data) => {
+      if (!data.match(req.params._id)) {
+        res.status(404).send(`This user doesn't exist`);
+      } else {
+        res.send(
+          JSON.parse(data).filter((user) => user._id === req.params._id)
+        );
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
 
-const sendUser = (req, res) => {
-  router.use(readFileUsers);
-  res.send(readFileUsers.filter((user) => user._id === req.params._id));
-};
-
-router.get("/users/:_id", doesUserExist, sendUser);
-
+router.get("/users/:_id", readFileUsers);
 router.get("/users", (req, res) => {
   res.status(404).send("Requested resource not found");
 });

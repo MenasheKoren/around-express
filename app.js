@@ -1,13 +1,8 @@
 const express = require("express");
 const users = require("./routes/users");
 const cards = require("./routes/cards");
-// const { readFile } = require("./middleware");
 const { PORT = 3000 } = process.env;
 const app = express();
-
-app.get("/test", (req, res) => {
-  res.send("test test test");
-});
 
 app.listen(PORT, function (err) {
   if (err) {
@@ -21,5 +16,5 @@ app.use("/", cards);
 
 app.use(function (err, req, res, next) {
   console.error(err.stack);
-  res.status(500).send("Something broke!");
+  res.status(500).send("An error has occurred on the server!");
 });
