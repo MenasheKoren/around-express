@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const path = require('path');
 const fsPromises = require('fs').promises;
-
+const {readFileData} = require('../helpers/index')
 const usersPath = path.join(__dirname, '..', 'data', 'users.json');
 
 function readFileUsers(req, res) {
@@ -22,15 +22,17 @@ function readFileUsers(req, res) {
 }
 
 router.get('/users/:_id', readFileUsers);
-router.get('/users', (req, res) => {
-  fsPromises
-    .readFile(usersPath, { encoding: 'utf8' })
-    .then((data) => {
-      res.status(200).send(JSON.parse(data));
-    })
-    .catch(() => {
-      res.status(500).send({ message: 'An error has occurred on the server' });
-    });
-});
+router.use(usersPath, readFileData)
+router.get('/users', readFileData);
+// router.get('/users', (req, res) => {
+//   fsPromises
+//     .readFile(usersPath, { encoding: 'utf8' })
+//     .then((data) => {
+//       res.status(200).send(JSON.parse(data));
+//     })
+//     .catch(() => {
+//       res.status(500).send({ message: 'An error has occurred on the server' });
+//     });
+// });
 
 module.exports = router;

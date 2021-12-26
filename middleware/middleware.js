@@ -1,14 +1,12 @@
 const middleware = require('express').Router();
-
 const path = require('path');
 const fsPromises = require('fs').promises;
 // const cardsPath = require('../routes/cards')
 
-function readFileCards(req, res) {
-  // middleware.use(cardsPath)
-  const cardsPath = path.join(__dirname, '..', 'data', 'cards.json');
+function readFileData(req, res, routerFileSelector) {
+  const dataPath = path.join(__dirname, '..', 'data', '${routerFileSelector}.json');
   fsPromises
-    .readFile(cardsPath, { encoding: 'utf8' })
+    .readFile(dataPath, { encoding: 'utf8' })
     .then((data) => {
       res.status(200).send(JSON.parse(data));
     })
