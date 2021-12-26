@@ -8,7 +8,7 @@ function readFileUsers(req, res) {
   fsPromises
     .readFile(usersPath, { encoding: 'utf8' })
     .then((data) => {
-      if (!data.match(req.params._id)) {
+      if (!JSON.parse(data).find((user) => user._id === req.params._id)) {
         res.status(404).send({ message: 'This user doesn\'t exist' });
       } else {
         res.send(
