@@ -1,32 +1,36 @@
-const router = require("express").Router();
-const path = require("path");
-const fsPromises = require("fs").promises;
+const router = require('express').Router();
+const path = require('path');
+const fsPromises = require('fs').promises;
+
+const usersPath = path.join(__dirname, '..', 'data', 'users.json');
 
 function readFileUsers(req, res) {
-  const usersPath = path.join(__dirname, "..", "data", "users.json");
   fsPromises
-    .readFile(usersPath, { encoding: "utf8" })
+    .readFile(usersPath, { encoding: 'utf8' })
     .then((data) => {
       if (!data.match(req.params._id)) {
-        res.status(404).send(`This user doesn't exist`);
+        res.status(404).send({ message: 'This user doesn\'t exist' });
       } else {
         res.send(
-          JSON.parse(data).filter((user) => user._id === req.params._id)
+          JSON.parse(data).filter((user) => user._id === req.params._id),
         );
       }
     })
-    .catch((err) => {
-      console.log(err);
+    .catch(() => {
+      res.status(500).send({ message: 'An error has occurred on the server' });
     });
 }
 
-router.get("/users/:_id", readFileUsers);
-router.get("/users", (req, res) => {
-  res.status(404).send("Requested resource not found");
-});
-
-router.get("/", (req, res) => {
-  res.status(404).send("Requested resource not found");
+router.get('/users/:_id', readFileUsers);
+router.get('/users', (req, res) => {
+  fsPromises
+    .readFile(usersPath, { encoding: 'utf8' })
+    .then((data) => {
+      res.status(200).send(JSON.parse(data));
+    })
+    .catch(() => {
+      res.status(500).send({ message: 'An error has occurred on the server' });
+    });
 });
 
 module.exports = router;
