@@ -8,14 +8,14 @@ function readFileUsers(dataUsersPath, req, res) {
   fsPromises
     .readFile(dataUsersPath, { encoding: 'utf8' })
     .then((data) => {
-      if (!data.match(req.params._id)) {
+      if (req.params._id) {
         if (!JSON.parse(data).find((user) => user._id === req.params._id)) {
           res.status(404).send({ message: 'This user doesn\'t exist' });
         } else {
           res
             .status(200)
             .send(
-              JSON.parse(data).filter((user) => user._id === req.params._id)
+              JSON.parse(data).filter((user) => user._id === req.params._id),
             );
         }
       }
