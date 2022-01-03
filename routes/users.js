@@ -1,8 +1,6 @@
 const router = require('express').Router();
-const { readFileData, usersPath, readFileUsers } = require('../helpers/index');
+const { getUsers, getUserById } = require('../controllers/users');
 
-router.get('/users/:_id', (res, req) => readFileUsers(usersPath, res, req));
-
-router.get('/users', (res, req) => readFileData(usersPath, res, req));
-
+router.get('/users/:userId', (req, res) => getUserById(req, res));
+router.get('/users', (req, res) => getUsers(req.userId, res));
 module.exports = router;

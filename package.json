@@ -21,7 +21,8 @@
   "main": "index.js",
   "name": "web_project_12",
   "prettier": {
-    "singleQuote": true
+    "singleQuote": true,
+    "bracketSpacing": true
   },
   "repository": {
     "type": "git",
