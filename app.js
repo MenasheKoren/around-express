@@ -23,6 +23,14 @@ app.use(express.json());
 app.use('/', users);
 app.use('/', cards);
 
+app.use((req, res, next) => {
+  req.user = {
+    _id: '61d40460c615a1caf9d8a61d',
+  };
+
+  next();
+});
+
 app.use((req, res) => {
   res.status(404).send({ message: 'Requested resource not found' });
 });
