@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+
 const users = require('./routes/users');
 
 const cards = require('./routes/cards');
@@ -16,6 +17,8 @@ app.listen(PORT, (err, res) => {
   // eslint-disable-next-line no-console
   console.log(`App listening on port ${PORT}`);
 });
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.use('/', users);
 app.use('/', cards);
