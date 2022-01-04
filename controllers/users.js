@@ -12,7 +12,7 @@ function getUsers(req, res) {
 }
 
 function getUserById(req, res) {
-  User.findById(req.params._id)
+  User.findById(req.params.userId)
     .orFail()
     .then((user) => res.send({ data: user }))
     .catch((err) => res.status(500).send({ message: `Error (getUserById): ${err}` }));
