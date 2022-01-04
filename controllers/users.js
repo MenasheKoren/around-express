@@ -12,17 +12,17 @@ function getUsers(req, res) {
 }
 
 function getUserById(req, res) {
-  User.findById((req.userId = '61d3372ee6fd45d3fec1d71b'))
+  User.findById(req.params._id)
     .orFail()
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: `Error: ${err} when finding user Id` }));
+    .catch((err) => res.status(500).send({ message: `Error (getUserById): ${err}` }));
 }
 
 function createUser(req, res) {
   const { name, about, avatar } = req.body;
-  User.create({ name: 'Mr. Test', about: 'Testbot', avatar: 'https://media1.giphy.com/media/gw3IWyGkC0rsazTi/200.gif' })
+  User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: `Error: ${err} when creating user` }));
+    .catch((err) => res.status(500).send({ message: `Error (createUser): ${err}` }));
 }
 
 module.exports = { getUsers, getUserById, createUser };
