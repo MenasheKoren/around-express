@@ -1,29 +1,39 @@
 const User = require('../models/user');
-const onFailNotFoundError = require('../errors/not-found-error');
+const {
+  onFailNotFoundErrorHandler,
+  getUsersErrorHandlerSelector,
+  getUserByIdErrorHandlerSelector,
+} = require('../errors/not-found-error');
 
 function getUsers(req, res) {
   User.find()
-    .orFail(onFailNotFoundError('users'))
+    .orFail(() => {
+      onFailNotFoundErrorHandler(getUsersErrorHandlerSelector);
+    })
     .then((data) => {
       res.status(200).send(data);
     })
-    .catch(() => {
-      res.status(500).send({ message: 'An error has occurred on the server' });
+    .catch((err) => {
+      res.status(err.statusCode).send({ message: `(getUsers)...${err}` });
     });
 }
 
 function getUserById(req, res) {
   User.findById(req.params.userId)
-    .orFail(onFailNotFoundError('user with that Id'))
+    .orFail(() => {
+      onFailNotFoundErrorHandler(getUserByIdErrorHandlerSelector);
+    })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: `Error (getUserById): ${err}` }));
+    .catch((err) => res.status(err.statusCode).send({
+      message: `(getUserById)...${err}`,
+    }));
 }
 
 function createUser(req, res) {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: `Error (createUser): ${err}` }));
+    .catch((err) => res.status(400).send({ message: `(createUser): ${err}` }));
 }
 
 module.exports = { getUsers, getUserById, createUser };
