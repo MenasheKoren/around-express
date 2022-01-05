@@ -1,8 +1,9 @@
 const User = require('../models/user');
+const onFailNotFoundError = require('../errors/not-found-error');
 
 function getUsers(req, res) {
   User.find()
-    .orFail()
+    .orFail(onFailNotFoundError('users'))
     .then((data) => {
       res.status(200).send(data);
     })
@@ -13,7 +14,7 @@ function getUsers(req, res) {
 
 function getUserById(req, res) {
   User.findById(req.params.userId)
-    .orFail()
+    .orFail(onFailNotFoundError('user with that Id'))
     .then((user) => res.send({ data: user }))
     .catch((err) => res.status(500).send({ message: `Error (getUserById): ${err}` }));
 }

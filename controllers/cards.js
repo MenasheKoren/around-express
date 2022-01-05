@@ -1,8 +1,9 @@
 const Card = require('../models/card');
+const onFailNotFoundError = require('../errors/not-found-error');
 
 function getCards(req, res) {
   Card.find()
-    .orFail()
+    .orFail(onFailNotFoundError('cards'))
     .then((data) => {
       res.status(200).send(data);
     })
@@ -20,7 +21,7 @@ function createCard(req, res) {
 
 function deleteCardById(req, res) {
   Card.findByIdAndDelete(req.params.cardId)
-    .orFail()
+    .orFail(onFailNotFoundError('card with that Id'))
     .then((card) => res.send({ data: card }))
     .catch((err) => res.status(500).send({ message: `Error (deleteCardById): ${err}` }));
 }
