@@ -1,6 +1,6 @@
 const Card = require('../models/card');
 const {
-  onFailNotFoundErrorHandler,
+  notFoundErrorHandler,
   getCardsErrorHandlerSelector,
   getCardByIdErrorHandlerSelector,
 } = require('../errors/not-found-error');
@@ -8,12 +8,13 @@ const {
 module.exports.getCards = (req, res) => {
   Card.find()
     .orFail(() => {
-      onFailNotFoundErrorHandler(getCardsErrorHandlerSelector);
+      notFoundErrorHandler(getCardsErrorHandlerSelector);
     })
     .then((data) => {
       res.status(200).send(data);
     })
     .catch((err) => {
+      console.log(err);
       if (err.statusCode === 404) {
         res.status(err.statusCode).send({
           message: `(getCards)....${err}`,
@@ -31,16 +32,20 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then((card) => res.status(200).send({ data: card }))
     // todo: Find an if statement for catch status codes 400 & 500
-    .catch((err) => res.status(400).send({ message: `(createCard).... ${err}` }));
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send({ message: `(createCard).... ${err}` });
+    });
 };
 
 module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndDelete(req.params.cardId)
     .orFail(() => {
-      onFailNotFoundErrorHandler(getCardByIdErrorHandlerSelector);
+      notFoundErrorHandler(getCardByIdErrorHandlerSelector);
     })
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
+      console.log(err);
       if (err.statusCode === 404) {
         res.status(err.statusCode).send({
           message: `(deleteCardById)....${err}`,
@@ -59,10 +64,11 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .orFail(() => {
-    onFailNotFoundErrorHandler(getCardByIdErrorHandlerSelector);
+    notFoundErrorHandler(getCardByIdErrorHandlerSelector);
   })
   .then((card) => res.status(200).send({ data: card }))
   .catch((err) => {
+    console.log(err);
     if (err.statusCode === 404) {
       res.status(err.statusCode).send({
         message: `(likeCard)....${err}`,
@@ -80,10 +86,11 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .orFail(() => {
-    onFailNotFoundErrorHandler(getCardByIdErrorHandlerSelector);
+    notFoundErrorHandler(getCardByIdErrorHandlerSelector);
   })
   .then((card) => res.status(200).send({ data: card }))
   .catch((err) => {
+    console.log(err);
     if (err.statusCode === 404) {
       res.status(err.statusCode).send({
         message: `(dislikeCard)....${err}`,

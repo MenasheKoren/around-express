@@ -1,19 +1,25 @@
 const User = require('../models/user');
 const {
-  onFailNotFoundErrorHandler,
+  notFoundErrorHandler,
   getUsersErrorHandlerSelector,
   getUserByIdErrorHandlerSelector,
 } = require('../errors/not-found-error');
+const {
+  invalidDataPassedErrorHandler,
+  userDataErrorHandlerSelector,
+  createActionFailSelector,
+} = require('../errors/invalid-data-passed-error');
 
 module.exports.getUsers = (req, res) => {
   User.find()
     .orFail(() => {
-      onFailNotFoundErrorHandler(getUsersErrorHandlerSelector);
+      notFoundErrorHandler(getUsersErrorHandlerSelector);
     })
     .then((data) => {
       res.status(200).send(data);
     })
     .catch((err) => {
+      console.log(err.name);
       if (err.statusCode === 404) {
         res.status(err.statusCode).send({
           message: `(getUsers)....${err}`,
@@ -29,11 +35,11 @@ module.exports.getUsers = (req, res) => {
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     .orFail(() => {
-      onFailNotFoundErrorHandler(getUserByIdErrorHandlerSelector);
+      notFoundErrorHandler(getUserByIdErrorHandlerSelector);
     })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.statusCode === 404) {
+      if (err.name === 'CastError') {
         res.status(err.statusCode).send({
           message: `(getUserById)....${err}`,
         });
@@ -41,7 +47,7 @@ module.exports.getUserById = (req, res) => {
         res.status(500).send({
           message: '(getUserById)....: An error has occurred on the server',
         });
-      }
+      }add invalid-data-passed-error.js
     });
 };
 
@@ -49,10 +55,18 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.status(200).send({ data: user }))
-    // todo: Find an if statement for catch status codes 400 & 500
-    .catch((err) => res.status(400).send({
-      message: `(createUser).... ${err}`,
-    }));
+    .catch((err) => {
+      console.log(err.name);
+      if (err.name === 'ValidationError') {
+        res.status(400).send({
+          message: `(createUser).... ${err}`,
+        });
+      } else {
+        res.status(500).send({
+          message: '(createUser)....: An error has occurred on the server',
+        });
+      }
+    });
 };
 
 module.exports.updateUserProfile = (req, res) => {
@@ -67,17 +81,19 @@ module.exports.updateUserProfile = (req, res) => {
     },
   )
     .orFail(() => {
-      onFailNotFoundErrorHandler(getUserByIdErrorHandlerSelector);
+      notFoundErrorHandler(getUserByIdErrorHandlerSelector);
     })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
+      console.log(err);
       if (err.statusCode === 404) {
         res.status(err.statusCode).send({
           message: `(updateUserProfile)....${err}`,
         });
       } else {
         res.status(500).send({
-          message: '(updateUserProfile)....: An error has occurred on the server',
+          message:
+            '(updateUserProfile)....: An error has occurred on the server',
         });
       }
     });
@@ -95,17 +111,19 @@ module.exports.updateUserAvatar = (req, res) => {
     },
   )
     .orFail(() => {
-      onFailNotFoundErrorHandler(getUserByIdErrorHandlerSelector);
+      notFoundErrorHandler(getUserByIdErrorHandlerSelector);
     })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
+      console.log(err);
       if (err.statusCode === 404) {
         res.status(err.statusCode).send({
           message: `(updateUserAvatar)....${err}`,
         });
       } else {
         res.status(500).send({
-          message: '(updateUserAvatar)....: An error has occurred on the server',
+          message:
+            '(updateUserAvatar)....: An error has occurred on the server',
         });
       }
     });

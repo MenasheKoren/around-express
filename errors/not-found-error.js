@@ -1,7 +1,7 @@
-function onFailNotFoundErrorHandler(queryFailSelector) {
-  const error = new Error(`Requested ${queryFailSelector} not found`);
-  error.statusCode = 404;
-  throw error;
+function notFoundErrorHandler(queryFailSelector) {
+  const ERROR_CODE = new CastError(`Requested ${queryFailSelector} not found`);
+  ERROR_CODE.statusCode = 404;
+  throw ERROR_CODE;
 }
 
 const getUsersErrorHandlerSelector = 'users';
@@ -11,7 +11,7 @@ const getCardsErrorHandlerSelector = 'cards';
 const getCardByIdErrorHandlerSelector = 'card with that Id';
 
 module.exports = {
-  onFailNotFoundErrorHandler,
+  notFoundErrorHandler,
   getUsersErrorHandlerSelector,
   getUserByIdErrorHandlerSelector,
   getCardByIdErrorHandlerSelector,
