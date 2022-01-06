@@ -5,7 +5,7 @@ const {
   getCardByIdErrorHandlerSelector,
 } = require('../errors/not-found-error');
 
-function getCards(req, res) {
+module.exports.getCards = (req, res) => {
   Card.find()
     .orFail(() => {
       onFailNotFoundErrorHandler(getCardsErrorHandlerSelector);
@@ -24,22 +24,22 @@ function getCards(req, res) {
         });
       }
     });
-}
+};
 
-function createCard(req, res) {
+module.exports.createCard = (req, res) => {
   const { owner, name, link } = req.body;
   Card.create({ name, link, owner })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(200).send({ data: card }))
     // todo: Find an if statement for catch status codes 400 & 500
     .catch((err) => res.status(400).send({ message: `(createCard).... ${err}` }));
-}
+};
 
-function deleteCardById(req, res) {
+module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndDelete(req.params.cardId)
     .orFail(() => {
       onFailNotFoundErrorHandler(getCardByIdErrorHandlerSelector);
     })
-    .then((card) => res.send({ data: card }))
+    .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       if (err.statusCode === 404) {
         res.status(err.statusCode).send({
@@ -51,9 +51,46 @@ function deleteCardById(req, res) {
         });
       }
     });
-}
+};
 
-// todo PUT /cards/:cardId/likes — like a card
-// todo DELETE /cards/:cardId/likes — unlike a card
+module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
+  req.params.cardId,
+  { $addToSet: { likes: req.user._id } },
+  { new: true },
+)
+  .orFail(() => {
+    onFailNotFoundErrorHandler(getCardByIdErrorHandlerSelector);
+  })
+  .then((card) => res.status(200).send({ data: card }))
+  .catch((err) => {
+    if (err.statusCode === 404) {
+      res.status(err.statusCode).send({
+        message: `(likeCard)....${err}`,
+      });
+    } else {
+      res.status(500).send({
+        message: '(likeCard)....: An error has occurred on the server',
+      });
+    }
+  });
 
-module.exports = { getCards, createCard, deleteCardById };
+module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
+  req.params.cardId,
+  { $pull: { likes: req.user._id } },
+  { new: true },
+)
+  .orFail(() => {
+    onFailNotFoundErrorHandler(getCardByIdErrorHandlerSelector);
+  })
+  .then((card) => res.status(200).send({ data: card }))
+  .catch((err) => {
+    if (err.statusCode === 404) {
+      res.status(err.statusCode).send({
+        message: `(dislikeCard)....${err}`,
+      });
+    } else {
+      res.status(500).send({
+        message: '(dislikeCard)....: An error has occurred on the server',
+      });
+    }
+  });

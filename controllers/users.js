@@ -5,7 +5,7 @@ const {
   getUserByIdErrorHandlerSelector,
 } = require('../errors/not-found-error');
 
-function getUsers(req, res) {
+module.exports.getUsers = (req, res) => {
   User.find()
     .orFail(() => {
       onFailNotFoundErrorHandler(getUsersErrorHandlerSelector);
@@ -24,14 +24,14 @@ function getUsers(req, res) {
         });
       }
     });
-}
+};
 
-function getUserById(req, res) {
+module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
     .orFail(() => {
       onFailNotFoundErrorHandler(getUserByIdErrorHandlerSelector);
     })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.statusCode === 404) {
         res.status(err.statusCode).send({
@@ -43,19 +43,19 @@ function getUserById(req, res) {
         });
       }
     });
-}
+};
 
-function createUser(req, res) {
+module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     // todo: Find an if statement for catch status codes 400 & 500
     .catch((err) => res.status(400).send({
       message: `(createUser).... ${err}`,
     }));
-}
+};
 
-function updateUserProfile(req, res) {
+module.exports.updateUserProfile = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -69,21 +69,21 @@ function updateUserProfile(req, res) {
     .orFail(() => {
       onFailNotFoundErrorHandler(getUserByIdErrorHandlerSelector);
     })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.statusCode === 404) {
         res.status(err.statusCode).send({
-          message: `(getUserById)....${err}`,
+          message: `(updateUserProfile)....${err}`,
         });
       } else {
         res.status(500).send({
-          message: '(getUserById)....: An error has occurred on the server',
+          message: '(updateUserProfile)....: An error has occurred on the server',
         });
       }
     });
-}
+};
 
-function updateUserAvatar(req, res) {
+module.exports.updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   User.findByIdAndUpdate(
     req.user._id,
@@ -97,23 +97,16 @@ function updateUserAvatar(req, res) {
     .orFail(() => {
       onFailNotFoundErrorHandler(getUserByIdErrorHandlerSelector);
     })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.statusCode === 404) {
         res.status(err.statusCode).send({
-          message: `(getUserById)....${err}`,
+          message: `(updateUserAvatar)....${err}`,
         });
       } else {
         res.status(500).send({
-          message: '(getUserById)....: An error has occurred on the server',
+          message: '(updateUserAvatar)....: An error has occurred on the server',
         });
       }
     });
-}
-module.exports = {
-  getUsers,
-  getUserById,
-  createUser,
-  updateUserProfile,
-  updateUserAvatar,
 };
