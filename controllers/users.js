@@ -16,14 +16,12 @@ function getUsers(req, res) {
     .catch((err) => {
       if (err.statusCode === 404) {
         res.status(err.statusCode).send({
-          message: `(getUsers)...${err}`,
+          message: `(getUsers)....${err}`,
         });
       } else {
-        res
-          .status(500)
-          .send({
-            message: '(getUsers)...: An error has occurred on the server',
-          });
+        res.status(500).send({
+          message: '(getUsers)....: An error has occurred on the server',
+        });
       }
     });
 }
@@ -37,14 +35,12 @@ function getUserById(req, res) {
     .catch((err) => {
       if (err.statusCode === 404) {
         res.status(err.statusCode).send({
-          message: `(getUserById)...${err}`,
+          message: `(getUserById)....${err}`,
         });
       } else {
-        res
-          .status(500)
-          .send({
-            message: '(getUserById)...: An error has occurred on the server',
-          });
+        res.status(500).send({
+          message: '(getUserById)....: An error has occurred on the server',
+        });
       }
     });
 }
@@ -53,7 +49,10 @@ function createUser(req, res) {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(400).send({ message: `(createUser): ${err}` }));
+    // TODO: Find an if statement for catch status codes 400 & 500
+    .catch((err) => res.status(400).send({
+      message: `(createUser).... ${err}`,
+    }));
 }
 
 module.exports = { getUsers, getUserById, createUser };
