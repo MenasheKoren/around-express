@@ -30,7 +30,7 @@ function createCard(req, res) {
   const { owner, name, link } = req.body;
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
-    // TODO: Find an if statement for catch status codes 400 & 500
+    // todo: Find an if statement for catch status codes 400 & 500
     .catch((err) => res.status(400).send({ message: `(createCard).... ${err}` }));
 }
 
@@ -52,5 +52,8 @@ function deleteCardById(req, res) {
       }
     });
 }
+
+// todo PUT /cards/:cardId/likes — like a card
+// todo DELETE /cards/:cardId/likes — unlike a card
 
 module.exports = { getCards, createCard, deleteCardById };
