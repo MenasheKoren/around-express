@@ -14,7 +14,17 @@ function getUsers(req, res) {
       res.status(200).send(data);
     })
     .catch((err) => {
-      res.status(err.statusCode).send({ message: `(getUsers)...${err}` });
+      if (err.statusCode === 404) {
+        res.status(err.statusCode).send({
+          message: `(getUsers)...${err}`,
+        });
+      } else {
+        res
+          .status(500)
+          .send({
+            message: '(getUsers)...: An error has occurred on the server',
+          });
+      }
     });
 }
 
@@ -24,9 +34,19 @@ function getUserById(req, res) {
       onFailNotFoundErrorHandler(getUserByIdErrorHandlerSelector);
     })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(err.statusCode).send({
-      message: `(getUserById)...${err}`,
-    }));
+    .catch((err) => {
+      if (err.statusCode === 404) {
+        res.status(err.statusCode).send({
+          message: `(getUserById)...${err}`,
+        });
+      } else {
+        res
+          .status(500)
+          .send({
+            message: '(getUserById)...: An error has occurred on the server',
+          });
+      }
+    });
 }
 
 function createUser(req, res) {

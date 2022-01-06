@@ -13,9 +13,19 @@ function getCards(req, res) {
     .then((data) => {
       res.status(200).send(data);
     })
-    .catch((err) => res.status(err.statusCode).send({
-      message: `(getCards)...${err}`,
-    }));
+    .catch((err) => {
+      if (err.statusCode === 404) {
+        res.status(err.statusCode).send({
+          message: `(getCards)...${err}`,
+        });
+      } else {
+        res
+          .status(500)
+          .send({
+            message: '(getCards)...: An error has occurred on the server',
+          });
+      }
+    });
 }
 
 function createCard(req, res) {
@@ -31,9 +41,19 @@ function deleteCardById(req, res) {
       onFailNotFoundErrorHandler(getCardByIdErrorHandlerSelector);
     })
     .then((card) => res.send({ data: card }))
-    .catch((err) => res.status(err.statusCode).send({
-      message: `(deleteCardById)...${err}`,
-    }));
+    .catch((err) => {
+      if (err.statusCode === 404) {
+        res.status(err.statusCode).send({
+          message: `(deleteCardById)...${err}`,
+        });
+      } else {
+        res
+          .status(500)
+          .send({
+            message: '(deleteCardById)...: An error has occurred on the server',
+          });
+      }
+    });
 }
 
 module.exports = { getCards, createCard, deleteCardById };
