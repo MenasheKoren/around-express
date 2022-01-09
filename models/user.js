@@ -4,14 +4,14 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    minLength: [2, 'needs at least 2 letters'],
-    maxLength: [30, 'cannot be longer than 30 letters'],
+    minLength: [2, 'needs at least 2 letters, got {VALUE}'],
+    maxLength: [30, 'cannot be longer than 30 letters, got {VALUE}'],
   },
   about: {
     type: String,
     required: true,
-    minLength: [2, 'needs at least 2 letters'],
-    maxLength: [30, 'cannot be longer than 30 letters'],
+    minLength: [2, 'needs at least 2 letters, got {VALUE}'],
+    maxLength: [30, 'cannot be longer than 30 letters, got {VALUE}'],
   },
   avatar: {
     type: String,
