@@ -1,21 +1,20 @@
 const Card = require('../models/card');
 const {
-  notFoundErrorHandler,
+  documentNotFoundErrorHandler,
   getCardsErrorHandlerSelector,
   getCardByIdErrorHandlerSelector,
 } = require('../errors/not-found-error');
 
 module.exports.getCards = (req, res) => {
-  Card.find()
+  Card.find().lean()
     .orFail(() => {
-      notFoundErrorHandler(getCardsErrorHandlerSelector);
+      documentNotFoundErrorHandler(getCardsErrorHandlerSelector);
     })
     .then((data) => {
       res.status(200).send(data);
     })
     .catch((err) => {
-      console.log(err);
-      if (err.statusCode === 404) {
+      if (err.name === 'DocumentNotFoundError') {
         res.status(err.statusCode).send({
           message: `(getCards)....${err}`,
         });
@@ -33,20 +32,27 @@ module.exports.createCard = (req, res) => {
     .then((card) => res.status(200).send({ data: card }))
     // todo: Find an if statement for catch status codes 400 & 500
     .catch((err) => {
-      console.log(err);
-      res.status(400).send({ message: `(createCard).... ${err}` });
+      if (err.name === 'ValidationError') {
+        res.status(err.statusCode).send({
+          message: `(createCard).... ${err}`,
+        });
+      } else {
+        res.status(500).send({
+          message: '(createCard)....: An error has occurred on the server',
+        });
+      }
     });
 };
 
 module.exports.deleteCardById = (req, res) => {
   Card.findByIdAndDelete(req.params.cardId)
     .orFail(() => {
-      notFoundErrorHandler(getCardByIdErrorHandlerSelector);
+      documentNotFoundErrorHandler(getCardByIdErrorHandlerSelector);
     })
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
       console.log(err);
-      if (err.statusCode === 404) {
+      if (err.name === 'DocumentNotFoundError') {
         res.status(err.statusCode).send({
           message: `(deleteCardById)....${err}`,
         });
@@ -64,12 +70,12 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .orFail(() => {
-    notFoundErrorHandler(getCardByIdErrorHandlerSelector);
+    documentNotFoundErrorHandler(getCardByIdErrorHandlerSelector);
   })
   .then((card) => res.status(200).send({ data: card }))
   .catch((err) => {
     console.log(err);
-    if (err.statusCode === 404) {
+    if (err.name === 'DocumentNotFoundError') {
       res.status(err.statusCode).send({
         message: `(likeCard)....${err}`,
       });
@@ -86,12 +92,12 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { new: true },
 )
   .orFail(() => {
-    notFoundErrorHandler(getCardByIdErrorHandlerSelector);
+    documentNotFoundErrorHandler(getCardByIdErrorHandlerSelector);
   })
   .then((card) => res.status(200).send({ data: card }))
   .catch((err) => {
     console.log(err);
-    if (err.statusCode === 404) {
+    if (err.name === 'DocumentNotFoundError') {
       res.status(err.statusCode).send({
         message: `(dislikeCard)....${err}`,
       });
