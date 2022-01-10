@@ -1,18 +1,20 @@
 # Around the U.S. Back End  
-  
-## Directories  
-  
-`/data` — JSON files to temporarily emulate database integration.  
-  
-`/routes` — routing files.  
-  
-All other directories are optional and may be created by the developer if necessary.   
-  
-## Running the Project  
-  
-`npm run start` — to launch the server.  
-  
-`npm run dev` — to launch the server with the hot reload feature.  
 
+# Project 13: Around The U.S. -- Express
 
+https://menashekoren.github.io/around-express/
+
+### Overview
+
+- Intro
+
+- Technologies
+
+**Intro**
+
+This is a back-end project, in coordination with Practicum100 to showcase the use of databases with Javascript. 
+
+**Technologies**
+
+This project was done using Mongoose via Express.
 
