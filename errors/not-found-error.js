@@ -1,8 +1,10 @@
+const ERROR_CODE = 404;
+
 function documentNotFoundErrorHandler(queryFailSelector) {
-  const ERROR_CODE = new Error(`Requested ${queryFailSelector} not found`);
-  ERROR_CODE.statusCode = 404;
-  ERROR_CODE.name = 'DocumentNotFoundError';
-  throw ERROR_CODE;
+  const error = new Error(`Requested ${queryFailSelector} not found`);
+  error.statusCode = ERROR_CODE;
+  error.name = 'DocumentNotFoundError';
+  throw error;
 }
 
 const getUsersErrorHandlerSelector = 'users';

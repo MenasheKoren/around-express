@@ -1,15 +1,17 @@
+const { Error } = require('mongoose');
 const User = require('../models/user');
 const {
   documentNotFoundErrorHandler,
   getUsersErrorHandlerSelector,
   getUserByIdErrorHandlerSelector,
 } = require('../errors/not-found-error');
-// const {
-//   invalidDataPassedErrorHandler,
-//   userDataErrorHandlerSelector,
-//   createActionFailSelector,
-// } = require('../errors/invalid-data-passed-error');
-const ValidationError = require('../errors/ValidationError');
+const {
+  invalidDataPassedErrorHandler,
+  userDataErrorHandlerSelector,
+  createActionFailSelector,
+  updateActionFailSelector,
+} = require('../errors/invalid-data-passed-error');
+// const ValidationError = require('../errors/ValidationError');
 
 module.exports.getUsers = (req, res) => {
   User.find()
@@ -23,11 +25,11 @@ module.exports.getUsers = (req, res) => {
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
         res.status(err.statusCode).send({
-          message: `(getUsers)....${err}`,
+          message: `${err}`,
         });
       } else {
         res.status(500).send({
-          message: '(getUsers)....: An error has occurred on the server',
+          message: 'An error has occurred on the server',
         });
       }
     });
@@ -38,15 +40,15 @@ module.exports.getUserById = (req, res) => {
     .lean()
     .orFail(() => documentNotFoundErrorHandler(getUserByIdErrorHandlerSelector))
     .then((user) => res.status(200).send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      console.log(err);
       if (err.name === 'DocumentNotFoundError') {
         res.status(err.statusCode).send({
-          message: `(getUserById)....${err}`,
+          message: `${err}`,
         });
       } else {
         res.status(500).send({
-          message: '(getUserById)....: An error has occurred on the server',
+          message: 'An error has occurred on the server',
         });
       }
     });
@@ -57,14 +59,16 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      console.log(err);
-      if (err instanceof ValidationError) {
-        res.status(400).send({
-          message: `(createUser).... ${err}`,
-        });
+      if (err instanceof Error) {
+        invalidDataPassedErrorHandler(
+          userDataErrorHandlerSelector,
+          createActionFailSelector,
+          res,
+          err,
+        );
       } else {
         res.status(500).send({
-          message: '(createUser)....: An error has occurred on the server',
+          message: 'An error has occurred on the server',
         });
       }
     });
@@ -86,14 +90,20 @@ module.exports.updateUserProfile = (req, res) => {
     })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'DocumentNotFoundError') {
         res.status(err.statusCode).send({
-          message: `(updateUserProfile)....${err}`,
+          message: `${err}`,
         });
+      } else if (err instanceof Error) {
+        invalidDataPassedErrorHandler(
+          userDataErrorHandlerSelector,
+          updateActionFailSelector,
+          res,
+          err,
+        );
       } else {
         res.status(500).send({
-          message:
-            '(updateUserProfile)....: An error has occurred on the server',
+          message: 'An error has occurred on the server',
         });
       }
     });
@@ -115,14 +125,20 @@ module.exports.updateUserAvatar = (req, res) => {
     })
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.statusCode === 404) {
+      if (err.name === 'DocumentNotFoundError') {
         res.status(err.statusCode).send({
-          message: `(updateUserAvatar)....${err}`,
+          message: `${err}`,
         });
+      } else if (err instanceof Error) {
+        invalidDataPassedErrorHandler(
+          userDataErrorHandlerSelector,
+          updateActionFailSelector,
+          res,
+          err,
+        );
       } else {
         res.status(500).send({
-          message:
-            '(updateUserAvatar)....: An error has occurred on the server',
+          message: 'An error has occurred on the server',
         });
       }
     });

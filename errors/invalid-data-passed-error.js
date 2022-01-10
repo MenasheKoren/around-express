@@ -1,6 +1,13 @@
-function invalidDataPassedErrorHandler(dataFailSelector, actionFailSelector) {
-  const ERROR_CODE = new Error(`${dataFailSelector} not ${actionFailSelector}`);
-  ERROR_CODE.statusCode = 400;
+const ERROR_CODE = 400;
+function invalidDataPassedErrorHandler(
+  dataFailSelector,
+  actionFailSelector,
+  res,
+  err,
+) {
+  res.status(ERROR_CODE).send({
+    message: `${dataFailSelector} not ${actionFailSelector}. ${err}`,
+  });
 }
 
 const userDataErrorHandlerSelector = 'User';
