@@ -11,7 +11,6 @@ const {
   createActionFailSelector,
   updateActionFailSelector,
 } = require('../errors/invalid-data-passed-error');
-// const ValidationError = require('../errors/ValidationError');
 
 module.exports.getUsers = (req, res) => {
   User.find()

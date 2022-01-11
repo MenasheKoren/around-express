@@ -5,6 +5,7 @@
   },
   "dependencies": {
     "express": "^4.17.2",
+    "helmet": "^5.0.1",
     "mongoose": "^6.1.4"
   },
   "description": "`/data` — JSON files to temporarily emulate database integration.",
