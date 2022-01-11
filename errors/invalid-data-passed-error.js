@@ -1,11 +1,11 @@
-const ERROR_CODE = 400;
+const ERROR_CODE_400 = 400;
 function invalidDataPassedErrorHandler(
   dataFailSelector,
   actionFailSelector,
   res,
   err,
 ) {
-  res.status(ERROR_CODE).send({
+  res.status(ERROR_CODE_400).send({
     message: `${dataFailSelector} not ${actionFailSelector}. ${err}`,
   });
 }

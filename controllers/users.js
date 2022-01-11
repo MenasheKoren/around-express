@@ -39,7 +39,6 @@ module.exports.getUserById = (req, res) => {
     .lean()
     .orFail(() => documentNotFoundErrorHandler(getUserByIdErrorHandlerSelector))
     .then((user) => res.status(200).send({ data: user }))
-    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'DocumentNotFoundError') {
         res.status(err.statusCode).send({
@@ -81,7 +80,7 @@ module.exports.updateUserProfile = (req, res) => {
     {
       new: true,
       runValidators: true,
-      upsert: true,
+      upsert: false,
     },
   )
     .orFail(() => {
@@ -116,7 +115,7 @@ module.exports.updateUserAvatar = (req, res) => {
     {
       new: true,
       runValidators: true,
-      upsert: true,
+      upsert: false,
     },
   )
     .orFail(() => {

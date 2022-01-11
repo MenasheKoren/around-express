@@ -1,8 +1,8 @@
-const ERROR_CODE = 404;
+const ERROR_CODE_404 = 404;
 
 function documentNotFoundErrorHandler(queryFailSelector) {
   const error = new Error(`Requested ${queryFailSelector} not found`);
-  error.statusCode = ERROR_CODE;
+  error.statusCode = ERROR_CODE_404;
   error.name = 'DocumentNotFoundError';
   throw error;
 }
