@@ -1,4 +1,4 @@
-const ERROR_CODE_404 = 404;
+const { ERROR_CODE_404 } = require('./error-constants');
 
 function documentNotFoundErrorHandler(queryFailSelector) {
   const error = new Error(`Requested ${queryFailSelector} not found`);

@@ -1,4 +1,3 @@
-const { Error } = require('mongoose');
 const Card = require('../models/card');
 const {
   documentNotFoundErrorHandler,
@@ -6,10 +5,17 @@ const {
   getCardByIdErrorHandlerSelector,
 } = require('../errors/not-found-error');
 const {
-  invalidDataPassedErrorHandler,
-  createActionFailSelector,
   cardDataErrorHandlerSelector,
+  deleteActionFailSelector,
+  likeActionFailSelector,
+  dislikeActionFailSelector,
 } = require('../errors/invalid-data-passed-error');
+
+const {
+  catchFindErrorHandler,
+  catchCreateErrorHandler,
+  catchFindByIdAndUpdateOrDeleteErrorHandler,
+} = require('../errors/catch-errors');
 
 module.exports.getCards = (req, res) => {
   Card.find()
@@ -21,15 +27,7 @@ module.exports.getCards = (req, res) => {
       res.status(200).send(data);
     })
     .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        res.status(err.statusCode).send({
-          message: `${err}`,
-        });
-      } else {
-        res.status(500).send({
-          message: 'An error has occurred on the server',
-        });
-      }
+      catchFindErrorHandler(err, res);
     });
 };
 
@@ -38,18 +36,7 @@ module.exports.createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
-      if (err instanceof Error) {
-        invalidDataPassedErrorHandler(
-          cardDataErrorHandlerSelector,
-          createActionFailSelector,
-          res,
-          err,
-        );
-      } else {
-        res.status(500).send({
-          message: 'An error has occurred on the server',
-        });
-      }
+      catchCreateErrorHandler(err, res, cardDataErrorHandlerSelector);
     });
 };
 
@@ -60,15 +47,12 @@ module.exports.deleteCardById = (req, res) => {
     })
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        res.status(err.statusCode).send({
-          message: `${err}`,
-        });
-      } else {
-        res.status(500).send({
-          message: 'An error has occurred on the server',
-        });
-      }
+      catchFindByIdAndUpdateOrDeleteErrorHandler(
+        err,
+        res,
+        cardDataErrorHandlerSelector,
+        deleteActionFailSelector,
+      );
     });
 };
 
@@ -82,15 +66,12 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   })
   .then((card) => res.status(200).send({ data: card }))
   .catch((err) => {
-    if (err.name === 'DocumentNotFoundError') {
-      res.status(err.statusCode).send({
-        message: `${err}`,
-      });
-    } else {
-      res.status(500).send({
-        message: 'An error has occurred on the server',
-      });
-    }
+    catchFindByIdAndUpdateOrDeleteErrorHandler(
+      err,
+      res,
+      cardDataErrorHandlerSelector,
+      likeActionFailSelector,
+    );
   });
 
 module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
@@ -103,13 +84,10 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   })
   .then((card) => res.status(200).send({ data: card }))
   .catch((err) => {
-    if (err.name === 'DocumentNotFoundError') {
-      res.status(err.statusCode).send({
-        message: `${err}`,
-      });
-    } else {
-      res.status(500).send({
-        message: 'An error has occurred on the server',
-      });
-    }
+    catchFindByIdAndUpdateOrDeleteErrorHandler(
+      err,
+      res,
+      cardDataErrorHandlerSelector,
+      dislikeActionFailSelector,
+    );
   });
