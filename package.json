@@ -4,11 +4,13 @@
     "url": "https://github.com/MenasheKoren/around-express/issues"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.17.2",
     "helmet": "^5.0.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.4",
-    "validator": "^13.7.0"
+    "validator": "^13.7.0",
+    "dotenv": "^15.0.0"
   },
   "description": "`/data` — JSON files to temporarily emulate database integration.",
   "devDependencies": {

@@ -1,4 +1,8 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 const User = require('../models/user');
+
 const {
   documentNotFoundErrorHandler,
   getUsersErrorHandlerSelector,
@@ -42,12 +46,21 @@ module.exports.getUserById = (req, res) => {
 };
 
 module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-  User.create({ name, about, avatar })
-    .then((user) => res.status(200).send({ data: user }))
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(password, 10).then((hash) => User.create({
+    name,
+    about,
+    avatar,
+    email,
+    password: hash,
+  })
+
+    .then((user) => res.status(200).send({ _id: user._id, email: user.email }))
     .catch((err) => {
       catchCreateErrorHandler(err, res, userDataErrorHandlerSelector);
-    });
+    }));
 };
 
 module.exports.updateUserProfile = (req, res) => {
@@ -105,9 +118,11 @@ module.exports.login = (req, res) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      const { NODE_ENV, JWT_SECRET } = process.env;
+
       const token = jwt.sign(
         { _id: user._id },
-        'not-so-secret-string',
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
         { expiresIn: '7d' },
       );
 
