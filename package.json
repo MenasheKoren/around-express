@@ -6,7 +6,7 @@
   "dependencies": {
     "express": "^4.17.2",
     "helmet": "^5.0.1",
-    "mongoose": "^6.1.4",
+    "mongoose": "^6.4.6",
     "validator": "^13.7.0"
   },
   "description": "`/data` — JSON files to temporarily emulate database integration.",
